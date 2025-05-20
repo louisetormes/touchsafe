@@ -15,17 +15,14 @@ const RegisterModal = ({ isOpen, onClose }) => {
     setError("");
     setSuccess("");
 
-    // Validações
     if (formData.clientSecret !== formData.confirmSecret) {
       setError("As senhas não coincidem");
       return;
     }
 
     try {
-      // 1. Obter token admin
       const adminToken = await getAdminToken();
       
-      // 2. Criar client no Keycloak
       await createKeycloakClient(adminToken, formData.clientId, formData.clientSecret);
       
       setSuccess("Client criado com sucesso!");
@@ -37,7 +34,7 @@ const RegisterModal = ({ isOpen, onClose }) => {
 
   const getAdminToken = async () => {
     const response = await fetch(
-      "http://localhost:8080/realms/master/protocol/openid-connect/token",
+      "http://localhost:8080/realms/realm/protocol/openid-connect/token",
       {
         method: "POST",
         headers: {
@@ -45,8 +42,8 @@ const RegisterModal = ({ isOpen, onClose }) => {
         },
         body: new URLSearchParams({
             grant_type: "password",
-            client_id: "admin-cli", // Client especial do Keycloak
-            username: "admin",     // Seu usuário admin
+            client_id: "admin-cli", 
+            username: "admin",     
             password: "admin"
         }),
       }
@@ -71,7 +68,7 @@ const RegisterModal = ({ isOpen, onClose }) => {
 
   const createKeycloakClient = async (token, clientId, secret) => {
     const response = await fetch(
-      `http://localhost:8080/admin/realms/master/clients`,
+      `http://localhost:8080/admin/realms/realm/clients`,
       {
         method: "POST",
         headers: {

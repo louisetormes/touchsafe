@@ -50,8 +50,8 @@ const PaymentModal = ({ payment, onClose, onUpdate }) => {
         throw new Error('Falha ao atualizar pagamento');
       }
 
-      onUpdate(); // Notifica o componente pai que a atualização foi bem-sucedida
-      onClose(); // Fecha o modal
+      onUpdate(); 
+      onClose(); 
     } catch (err) {
       console.error('Erro:', err);
       setError(err.message);

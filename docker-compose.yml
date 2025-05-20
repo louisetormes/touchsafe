@@ -4,17 +4,18 @@ services:
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_DB: keycloak
-      POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: touchsafe
+      POSTGRES_USER: louise
+      POSTGRES_PASSWORD: 121212
     volumes:
-      - postgres_data:/var/lib/postgresql/data 
+      - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5434:5434"
+      - "5432:5432"  # Corrigido para a porta padrão
+    restart: always
 
   keycloak:
     image: quay.io/keycloak/keycloak:21.1.1
-    command: start --optimized
+    command: start-dev
     environment:
       KC_DB: postgres
       KC_DB_URL_HOST: postgres
@@ -23,16 +24,46 @@ services:
       KC_DB_PASSWORD: password
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-      
       KC_IMPORT_REALM: /opt/keycloak/data/import/realm.json
     volumes:
-      - keycloak_data:/opt/keycloak/data  
-      - ./realm-export.json:/opt/keycloak/data/import/realm.json 
+      - keycloak_data:/opt/keycloak/data
+      - ./realm-export.json:/opt/keycloak/data/import/realm.json
     ports:
       - "8080:8080"
     depends_on:
       - postgres
+    restart: always
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - QUARKUS_HTTP_PORT=8989
+      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://postgres:5432/touchsafe
+      - QUARKUS_DATASOURCE_USERNAME=touchsafe_user
+      - QUARKUS_DATASOURCE_PASSWORD=touchsafe_pass
+      - QUARKUS_OIDC_AUTH_SERVER_URL=http://keycloak:8080/realms/master
+      - QUARKUS_OIDC_CLIENT_ID=auth-keycloak
+      - QUARKUS_OIDC_CREDENTIALS_SECRET=Tbfd2QwgZzqGV8W7uEJ8FLrmEfkx50Ve
+      - QUARKUS_OIDC_APPLICATION_TYPE=service
+    ports:
+      - "8989:8989"
+    depends_on:
+      - postgres
+      - keycloak
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: always
 
 volumes:
-  postgres_data: 
-  keycloak_data:  
+  postgres_data:
+  keycloak_data:

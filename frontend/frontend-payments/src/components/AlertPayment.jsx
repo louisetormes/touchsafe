@@ -37,7 +37,6 @@ const AlertPayment = () => {
 
   return (
     <>
-      {/* Popup pequeno */}
       <div className="fixed bottom-4 right-4 z-50">
         <div className="bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-3 rounded-lg shadow-xl flex items-center animate-bounce">
           <AlertCircle className="mr-2" size={20} />
@@ -51,7 +50,6 @@ const AlertPayment = () => {
         </div>
       </div>
 
-      {/* Modal detalhado */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-gray-800 rounded-xl max-w-md w-full border border-gray-700">

@@ -281,12 +281,10 @@ export default function Payments() {
         </div>
       </div>
 
-      {/* Dashboard de resumo */}
       <div className="mt-8">
         <Dashboard />
       </div>
 
-      {/* Modal de edição */}
       {editingPayment && (
         <PaymentModal
           payment={editingPayment}
