@@ -1,0 +1,13 @@
+br/com/authkeycloak/resource/OrganizatorPaymentResource.class
+br/com/authkeycloak/entities/OrganizatorPayment.class
+br/com/authkeycloak/dtos/AccessTokenKeycloakDTO.class
+br/com/authkeycloak/GestPay.class
+br/com/authkeycloak/resource/KeycloakAuthResource.class
+br/com/authkeycloak/dtos/OrganizatorPaymentDTO.class
+br/com/authkeycloak/entities/OrganizatorPayment$OrganizatorPaymentBuilder.class
+br/com/authkeycloak/clients/KeycloakClients.class
+br/com/authkeycloak/repositories/IOrganizatorPaymentRepository.class
+br/com/authkeycloak/dtos/TokenResponse.class
+br/com/authkeycloak/enums/PaymentEnum.class
+br/com/authkeycloak/repositories/OrganizatorRepository.class
+br/com/authkeycloak/PersistOrganizatorPayment.class
