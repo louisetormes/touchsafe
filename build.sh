@@ -1,45 +1,37 @@
 #!/bin/bash
-
 set -euo pipefail
-export TERM=dumb
-export DEBIAN_FRONTEND=noninteractive
 
-echo "🔧 Configurando ambiente Java..."
+# 1. Instala Java 21 (Temurin)
+echo "🔧 Instalando Java 21..."
 JAVA_DIR="/tmp/jdk-21"
-if [ ! -d "$JAVA_DIR" ]; then
-  echo "📦 Baixando JDK 21..."
-  mkdir -p "$JAVA_DIR"
-  wget -q https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.3%2B9/OpenJDK21U-jdk_x64_linux_hotspot_21.0.3_9.tar.gz -O /tmp/jdk.tar.gz
-  tar -xzf /tmp/jdk.tar.gz -C "$JAVA_DIR" --strip-components=1
-fi
+mkdir -p "$JAVA_DIR"
+wget -q https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.3%2B9/OpenJDK21U-jdk_x64_linux_hotspot_21.0.3_9.tar.gz -O /tmp/jdk.tar.gz
+tar -xzf /tmp/jdk.tar.gz -C "$JAVA_DIR" --strip-components=1
 export JAVA_HOME="$JAVA_DIR"
 export PATH="$JAVA_HOME/bin:$PATH"
 
-echo "🛠️ Configurando Maven..."
-MAVEN_HOME="/tmp/maven-3.8.6"
-if [ ! -d "$MAVEN_HOME" ]; then
-  echo "📦 Baixando Maven 3.8.6..."
-  mkdir -p "$MAVEN_HOME"
-  wget -q https://archive.apache.org/dist/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz -O /tmp/maven.tar.gz
-  tar -xzf /tmp/maven.tar.gz -C "$MAVEN_HOME" --strip-components=1
-fi
-export PATH="$MAVEN_HOME/bin:$PATH"
+# 2. Instala Node.js 
+echo "📦 Instalando Node.js..."
+NODE_VERSION=$(grep 'nodejs' .tool-versions | cut -d' ' -f2)
+curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell
+export PATH="/root/.local/share/fnm:$PATH"
+fnm install $NODE_VERSION
+fnm use $NODE_VERSION
 
-# 4. Build do Frontend (React)
-echo "🎨 Construindo frontend..."
+# 3. Build do Frontend
+echo "🎨 Build do frontend..."
 [ -d "frontend" ] && {
   cd frontend/frontend-payments
-  npm install --silent
+  npm install
   npm run build
   cd ../..
 }
 
-# 5. Build do Backend (Java)
-echo "⚙️ Construindo backend..."
+# 4. Build do Backend 
+echo "⚙️ Build do backend..."
 [ -f "pom.xml" ] && {
-  mvn clean package -DskipTests -B -q
-  echo "✅ Backend construído com sucesso!"
-  ls -lh target/*.jar
+  chmod +x mvnw
+  ./mvnw clean package -DskipTests
 }
 
-echo "🚀 Build completo!"
+echo "✅ Build completo!"
