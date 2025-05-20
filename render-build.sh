@@ -1,22 +1,24 @@
-#!/bin/bash
-set -euo pipefail
+#!/bin/sh
 
-# 1. Preserva a PATH original do Render
-export RENDER_ORIGINAL_PATH=$PATH
+PATH="/usr/local/bin:/usr/bin:/bin"
 
-# 2. Configuração do ambiente (sem quebrar o sistema de cores)
-export JAVA_HOME="/tmp/jdk-21"
-export PATH="$JAVA_HOME/bin:$RENDER_ORIGINAL_PATH"  # Adiciona ao PATH existente
-
-# 3. Instala Java (versão do seu .tool-versions)
-echo "🔧 Instalando Java..."
-mkdir -p "$JAVA_HOME"
+echo "Instalando Java..."
+mkdir -p /tmp/jdk
 wget -q https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.3%2B9/OpenJDK21U-jdk_x64_linux_hotspot_21.0.3_9.tar.gz -O /tmp/jdk.tar.gz
-tar -xzf /tmp/jdk.tar.gz -C "$JAVA_HOME" --strip-components=1
+tar -xzf /tmp/jdk.tar.gz -C /tmp/jdk --strip-components=1
+export JAVA_HOME="/tmp/jdk"
+export PATH="$JAVA_HOME/bin:$PATH"
 
-# 4. Build do projeto (seu comando original)
-echo "🚀 Iniciando build..."
+if [ -d "frontend" ]; then
+  echo "Instalando Node.js..."
+  curl -fsSL https://fnm.vercel.app/install | sh -s -- --skip-shell
+  . /root/.local/share/fnm/fnm
+  fnm use $(grep 'nodejs' .tool-versions | awk '{print $2}')
+  export PATH="/root/.local/share/fnm:$PATH"
+fi
+
+echo "Iniciando build..."
 chmod +x build.sh
 ./build.sh
 
-echo "✅ Build completo!"
+echo "Build concluído com sucesso!"

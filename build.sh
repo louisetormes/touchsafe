@@ -1,20 +1,17 @@
-#!/bin/bash
-set -euo pipefail
+#!/bin/sh
 
-# Frontend (Node.js)
-[ -d "frontend" ] && {
-  echo "📦 Instalando Node.js..."
-  export PATH="/root/.local/share/fnm:$PATH"
-  fnm use $(grep 'nodejs' .tool-versions | cut -d' ' -f2)
-  
+# Frontend
+if [ -d "frontend" ]; then
+  echo "Build do frontend..."
   cd frontend/frontend-payments
   npm install
   npm run build
   cd ../..
-}
+fi
 
-# Backend (Java)
-[ -f "pom.xml" ] && {
-  echo "⚙️ Build do backend..."
+# Backend
+if [ -f "pom.xml" ]; then
+  echo "Build do backend..."
+  chmod +x mvnw
   ./mvnw clean package -DskipTests
-}
+fi
