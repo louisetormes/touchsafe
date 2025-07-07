@@ -28,16 +28,17 @@ Aplicação full stack para gestão financeira pessoal, com foco em planejamento
 ---
 
 ## 🔧 Como executar
-Inicie os containers Docker (backend + keycloak + banco)
+1 - Inicie os containers Docker (backend + keycloak + banco)
 
-bash
+```bash
 docker-compose up -d
-Execute o frontend React
-
-bash
+```
+2 - Execute o frontend React
+```bash
 cd frontend/frontend-payments
 npm install
 npm start
+```
 
 
 
